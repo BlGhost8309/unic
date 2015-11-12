@@ -2,6 +2,15 @@
 //
 
 
+/***************************************************************************//**
+* Уникализация bmp файлов. Задумка следующая: кажды пиксель меняется на один
+* из соседних цветов рандомно. Это должно уникализировать картинку для поисковых
+* систем. Но пока это не работает... Поисковики палят эту тему.)) Работает только,
+*  если ее изменить до неузноваемости... Пока оставим, пока не придет в голову 
+*  что-нибудь поумнее.
+*
+****************************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
@@ -9,6 +18,7 @@
 #include <math.h>
 
 #define _CRT_SECURE_NO_WARNINGS
+
 
 
 #define INT32	int
@@ -148,7 +158,6 @@ UINT16 knImageReadUINT16(FILE *f)
 	UINT16 val = 0;
 
 	/*if*/ fread(&val, sizeof(UINT16), 1, f);
-		/*val = knsSwap16(val);*/
 
 	return val;
 }
@@ -215,16 +224,16 @@ STATUS imageUnicFile(const char *filename)
 
 	if (!filename)
 	{
-		/* Неверные параметры или устройство не открыто. */
+		/** Неверные параметры или устройство не открыто. */
 		printf("%s ERROR. File name have been not recieved \"%s\"!\r\n", imageFuncName);
 		return ERROR;
 	}
 	
-	/* Откроем файл. */
+	/** Откроем файл. */
 	f = fopen(filename, "rb");
 	if (!f)
 	{
-		/* Не открылся файл. */
+		/** Не открылся файл. */
 		printf("%s Error opening file \"%s\"!\r\n", imageFuncName, filename);
 		return ERROR;
 	}
@@ -232,7 +241,7 @@ STATUS imageUnicFile(const char *filename)
 	
 	
 	
-     /* Прочитаем первые два байта из файла и решим, в каком он формате. */
+     /** Прочитаем первые два байта из файла и решим, в каком он формате. */
     fseek(f, 0, SEEK_SET);
     fread(id, 1, 2, f);
     fseek(f, 0, SEEK_SET);
@@ -320,7 +329,7 @@ STATUS imageUnicFile(const char *filename)
 	/*info.biBitCount = ((info.biBitCount & 0xFF00) >> 8);*/
 	printf("\r\n info.biBitCount %d", info.biBitCount);
 	
-	offset = info.biBitCount / 8;
+	offset = (info.biBitCount / 8);
 
 	/* Встанем на начало данных. */
 
@@ -348,7 +357,7 @@ STATUS imageUnicFile(const char *filename)
 
 	
 		
-			/*printf("\r\n After %03X", *(UINT32*)ptrBuf);*/
+		/*printf("\r\n After %03X", *(UINT32*)ptrBuf);*/
 		
 		if(2 == offset)
 		{
@@ -356,9 +365,7 @@ STATUS imageUnicFile(const char *filename)
 		}
 		if(3 == offset)
 		{
-			/**(UINT32*)ptrBuf |= 0x00000100;*/
-
-			/**(UINT32*)ptrBuf &= 0xFFFFAFFF;*/
+			
 			if(PLUS == sign)
 			{
 				*(UINT8*)ptrBuf += rndColor;
@@ -397,8 +404,8 @@ STATUS imageUnicFile(const char *filename)
 		printf("\r\n Error with write file %s", outFileName);
 
 
+
 	fclose(fOut);
-	
 
 }
 
